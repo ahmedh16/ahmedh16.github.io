@@ -19,32 +19,54 @@
           width: 100%;
           height: 100%; 
         }
+
+.leaflet-popup-content-wrapper,
+.leaflet-popup-tip {
+  background: red;
+}
+
+.leaflet-popup {
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.leaflet-feature {
+color:black;
+}
     </style>
     
     <script>
           $(document).ready(function () {
   
-                var map = L.map('map').setView([40.731649,-73.977814], 10);
+                var map = L.map('map').setView([40.731649,-73.977814], 14);
 
                 L.tileLayer('http://tile.stamen.com/toner/{z}/{x}/{y}.png', {
                 attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, under <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. Data by <a href="http://openstreetmap.org">OpenStreetMap</a>, under <a href="http://www.openstreetmap.org/copyright">ODbL</a>.',
                 maxZoom: 18
                 }).addTo(map);
               
-              $.getJSON('https://ahmedh.cartodb.com/api/v2/sql?q=SELECT * FROM  listings_copy_1 ORDER BY price DESC LIMIT 20&format=GeoJSON')
-                .done(function (data) {
-                  L.geoJson(data).bindPopup('Airbnb option for <$50.<br> in Manhattan.')
-    .openPopup().addTo(map);  
+           $.getJSON('https://ahmedh.cartodb.com/api/v2/sql?q=SELECT * FROM  listings_copy_1 ORDER BY price DESC LIMIT 6&format=GeoJSON', function (data) {
+          L.geoJson(data, {
+         
+            onEachFeature: function (feature, layer) {
+              layer.bindPopup(feature.properties.neighbourhood);
+            }
+          }).addTo(map);
+
 
                 });
             });
+
+
 	</script>
 </head>
 
 
 <body>
-	<div id="map" style="width: 100%; height: 800px"></div>
-  
+         <div id="title" style="position: relative; z-index:1; background:yellow; top:200px;">Airbnb Options for Under $50 in Manhattan</div>
+	<div id="map" style="width: 100%; height: 800px; z-index:0;"></div>
+        
 	
 </body>
 </html>
