@@ -46,7 +46,7 @@ color:black;
                 maxZoom: 18
                 }).addTo(map);
               
-           $.getJSON('https://ahmedh.cartodb.com/api/v2/sql?q=SELECT * FROM  listings_copy_1 ORDER BY price DESC LIMIT 6&format=GeoJSON', function (data) {
+           $.getJSON('https://ahmedh.cartodb.com/api/v2/sql?q=SELECT * FROM  listings_copy_1 ORDER BY price DESC LIMIT 50&format=GeoJSON', function (data) {
           L.geoJson(data, {
          
             onEachFeature: function (feature, layer) {
