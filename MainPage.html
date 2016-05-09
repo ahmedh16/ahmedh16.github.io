@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <!--Edit the title of the page-->
+    <title>Import & Export Map</title>
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="http://libs.cartocdn.com/cartodb.js/v3/themes/css/cartodb.css" />
+      <link rel="stylesheet" href="style.css"/>
+    <!--[if lte IE 8]>
+      <link rel="stylesheet" href="http://libs.cartocdn.com/cartodb.js/v3/themes/css/cartodb.ie.css" />
+    <![endif]-->
+    <!--Switch between the different themes changing the stylesheet below - light-theme.css |dark-theme.css -->
+    <link rel="stylesheet" href="css/light-theme.css">
+    <link rel="stylesheet" href="css/makeitresponsive.css">
+    <script src="//code.jquery.com/jquery-2.1.1.min.js"></script>
+      <script src="//code.jquery.com/jquery-2.1.1.min.js"></script>
+  </head>
+  <style>
+    body{font-family: Helvetica, Arial; font-weight: regular; font-size: 15px; color: white; background-color: #FFF; margin: 0;}
+    h1{font-weight: bold; font-size: 31px; letter-spacing: 2px; color: white; line-height: 33px;}
+    h3{font-weight: bold; font-size: 12px; color: black; text-transform: uppercase; margin: 10px 0 0 0;}
+    p{margin: 8px 0 20px 0; line-height: 18px;}
+    a, a:visited{color: #ffff69; text-decoration: none;}
+    a:hover{text-decoration: bold;font-size:20px}
+
+    .wrapper{display: block; padding: 4px 30px 0 30px; background:}
+
+    .map{background-color:#6969ff; position: absolute; top: 0; right: 0; bottom: 0; width: 70%; *height:100%;}
+    .sidepanel{background-color:#f42a41; position: absolute; top: 0; left: 0; bottom: 0; width: 30%; height: 100%; overflow: auto;}
+
+    .context{font-family: Helvetica, Arial; font-size: 13px; color: #999; padding: 10px 0 0 0;}
+    .subheader{border-bottom: 1px solid #ddd;}
+    .footer{border-top: 1px solid #ddd; margin-top: 30px;}
+    .titleBlock{text-align: left;}  
+      
+    /* Here are the styles that makes the template responsive */
+
+    @media only screen and (max-width: 768px) {
+      .map{position: inherit; height: 600px; width: 100%; display: block;}
+      .sidepanel{position: inherit; width: 100%;}
+    }
+
+    @media only screen and (max-width: 480px) {
+      .map {height: 300px;}
+    }
+      
+      .infowindow_template {
+      background: red;
+      color:black;
+      }
+      .borough-picker {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        font-size: 14px;
+        color:white;
+        background:#f42a41;
+      }
+      .button1 {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        top: 15px;
+        right: 15px;
+        font-size: 14px;
+        color:white;
+        background:#f42a41;
+        height: 80px;
+        width:80px;
+        border-radius: 50px;
+        border: 20px;
+        
+      }
+      .button1 a {
+       color:white;
+       padding:5px;
+      
+      }
+      .button1:hover {
+        background:#ffff69;
+      }
+      
+      .button1 a:hover {
+       color:dimgray;
+       padding:5px;
+       font-size: 14px;
+       }
+      
+    
+      
+      
+      .button2 {
+        position: absolute;
+        top: 15px;
+        right: 100px;
+        font-size: 14px;
+        color:white;
+        background:#f42a41;
+        height: 80px;
+        width:80px;
+        border-radius: 50px;
+        border: 20px;
+      }
+      
+      .button2 a {
+       color:white;
+       padding:5px;
+      }
+      
+      
+      .button2:hover {
+        background:#ffff69;
+      }
+      
+      .button2 a:hover {
+       color:dimgray;
+       padding:5px;
+       font-size: 14px;
+       }
+          
+        .button3 {
+        position: absolute;
+        top: 15px;
+        right: 185px;
+        font-size: 14px;
+        color:white;
+        background:#f42a41;
+        height: 80px;
+        width:80px;
+        border-radius: 50px;
+        border: 20px;
+      }
+      
+      .button3 a {
+       color:white;
+       padding:5px;
+          }
+      
+      .button3:hover {
+        background:#ffff69;
+      }
+      
+      .button3 a:hover {
+       color:dimgray;
+       padding:5px;
+       font-size: 14px;
+       }
+      
+      
+      
+      
+    </style>
+  <body>
+      
+   --- <div class="map" id="map"></div>
+      
+      
+       <button class="button1" class="hover"><a href="MainPage.html">Total<br>Trade</a></button>
+       <button class="button2" class="hover"><a href="top10imports.html">Top Imports</a></button>
+       <button class="button3" class="hover"><a href="top10export.html">Top Exports</a></button>
+    
+
+    <div class="sidepanel">
+      <div class="wrapper">
+       
+        <br>
+            
+         <img src="http://ahmedh.neocities.org/Title.png" style="height:80px; width:100% align:left"> </img>
+          
+        <p>            
+        Bangladesh is currently our 58th largest goods trading partner with $6.1 billion in total (two way) goods trade during 2013. Goods exports totaled $712 million; Goods imports totaled $5.4 billion. The U.S. goods trade deficit with Bangladesh was $4.6 billion in 2013.<a href=''>Combined, the two claimed almost</a> Bangladesh is currently our 58th largest goods trading partner with $6.1 billion in total (two way) goods trade during 2013. Goods exports totaled $712 million; Goods imports totaled $5.4 billion. The U.S. goods trade deficit with Bangladesh was $4.6 billion in 2013.</p>
+            
+        <br><Br>
+        <h1>Trade Balance</h1>
+            
+         <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+                            <script type="text/javascript">
+                              google.charts.load('current', {'packages':['corechart']});
+                              google.charts.setOnLoadCallback(drawChart);
+                              function drawChart() {
+
+                                var data = google.visualization.arrayToDataTable([
+                                  ['Trade', 'Amount'],
+                                  ['Import',    39512780000],
+                                  ['Export',     33733625000],
+                                ]);
+
+                                var options = {
+                                  backgroundColor:'transparent',
+                                  pieStartAngle: 165,
+                                  fontSize:15,
+                                  chartArea:{width:'80%',height:'80%'},
+                                  pieSliceText: 'percentage',
+                                  pieHole: 0.4,
+                                  pieSliceTextStyle: {color: 'dimgray',bold:false},
+                                  slices: {
+                                      0: {color: '#2db573'},
+                                      1: {color: '#ffff69'}
+                                  },
+                                  forceIFrame: true,
+                                  legend: {position:'bottom',textStyle:{color:'white'}},
+                                  tooltip: { isHtml: true, showColorCode: true, text:'value',textstyle: {bold:false},trigger:'focus'},
+                                  titleTextStyle:{bold:false,color:'white',fontSize:'20'}
+                                };
+                                  
+                                  
+                                  
+                                  
+                                  
+
+                                var chart = new google.visualization.PieChart(document.getElementById('donut_single'));
+                                chart.draw(data, options);
+                              }
+                            </script>
+                            <div   id="donut_single" style="width: 300px; height: 300px;">  </div>
+                        
+
+        <!--Copy and paste the div below for creating content blocks-->
+        <br><br>
+        <h2 style="color: white; align:justify">Description</h2>
+        <p>The size and age of the Cosmos are beyond ordinary human understanding. Lost somewhere between immensity and eternity is our tiny planetary home. In a cosmic perspective, most human concerns seem insignificant, even petty. And yet our species is young and curious and brave and shows much promise. In the last few millennia we have made the most astonishing, unexpected discoveries about the Cosmos and our place within it, explorations that are exhilarating to consider. They remind us that humans have evolved to wonder, that understanding is a joy, that knowledge is prerequisite to survival. I believe our future depends powerfully on how well we understand this Cosmos in which we float like a mote of dust in the morning sky.</p>
+        <br>
+        
+
+         <div class="context subheader">
+          <p style="color:white">Map created by <a href="http://hasinahmed.org/" target="_blank">Hasin I. Ahmed</a></p><Br>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://maps.googleapis.com/maps/api/js?sensor=false&v=3.8"></script>
+    <script src="http://libs.cartocdn.com/cartodb.js/v3/cartodb.js"></script>
+    <!--Change the URL below in order to change the map that is being shown.
+    Go to your map in CartoDB, click on share, and copy the URL undert the API section
+    Check the cartodb.js documentation for more info
+    http://developers.cartodb.com/documentation/cartodb-js.html-->
+   
+      
+      
+      
+      <script>  
+        
+       var map;
+      var sublayer;
+        
+        function main() {
+
+          var options = {
+            center: [44, 21],
+            zoom: 2, 
+            cartodb_logo: false,
+            zoomControl: false,  // dont add the zoom overlay (it is added by default)
+            loaderControl: false //dont show tiles loader
+          };
+            
+
+          cartodb.createVis('map', 'https://ahmedh.cartodb.com/api/v2/viz/02639ae6-05a4-11e6-a9f7-0e787de82d45/viz.json', options)
+            .done(function(vis, layers) {
+              // there are two layers, base layer and points layer
+              sublayer = layers[1].getSubLayer(0);
+              sublayer.set({ 'interactivity': ['cartodb_id', 'coutry_name','url', 'exported_value_2014_usd_thousand','imported_value_2014_usd_thousand', 'trade_balance_2014_usd_thousand'] });
+
+
+              // Set the custom infowindow template defined on the html
+              sublayer.infowindow.set('template', $('#infowindow_template').html());
+            
+
+              // add the tooltip show when hover on the point
+              vis.addOverlay({
+                type: 'tooltip',
+                position: 'top|center',
+                template: '<div style="width:150px; color:#5d5d5d; padding:0px; font-size:16px"><img src="{{url}}" alt="image" height="50" width="50"><br>{{coutry_name}}</div>' 
+              });
+
+              vis.addOverlay({
+                type: 'infobox',
+                template: '<div style="background:white;padding:0px;border:0px" class="cartodb-tooltip-content-wrapper"><h3 style="color:#f42a41 ;font-size:18px;">{{coutry_name}} 2014</h3><h3 style="font-size:14px;color:#5d5d5d">Exported Amount:</h3><h3 style="font-size:24px;color:#2db573">${{exported_value_2014_usd_thousand}},000</h3><h3 style="font-size:14px;color:#5d5d5d">Imported Amount:</h3> <h3 style="font-size:24px;color:#2db573">${{imported_value_2014_usd_thousand}},000</h3><h3 style="font-size:14px;color:#5d5d5d">Trade Balance:</h3><h3 style="font-size:24px;color:#2db573">${{trade_balance_2014_usd_thousand}},000</h3></div>',
+                width: 190,
+                position: 'bottom|right'
+              });
+            });  
+        }
+
+          
+        
+        
+window.onload = main;
+        
+        
+    </script>
+
+  </body>
+      </html>
