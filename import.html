@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <!--Edit the title of the page-->
+    <title>Import & Export Map</title>
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="http://libs.cartocdn.com/cartodb.js/v3/themes/css/cartodb.css" />
+      <link rel="stylesheet" href="style.css"/>
+    <!--[if lte IE 8]>
+      <link rel="stylesheet" href="http://libs.cartocdn.com/cartodb.js/v3/themes/css/cartodb.ie.css" />
+    <![endif]-->
+    <!--Switch between the different themes changing the stylesheet below - light-theme.css |dark-theme.css -->
+    <link rel="stylesheet" href="css/light-theme.css">
+    <link rel="stylesheet" href="css/makeitresponsive.css">
+    <script src="//code.jquery.com/jquery-2.1.1.min.js"></script>
+      <script src="//code.jquery.com/jquery-2.1.1.min.js"></script>
+  </head>
+  <style>
+    body{font-family: Helvetica, Arial; font-weight: regular; font-size: 15px; color: white; background-color: #FFF; margin: 0;}
+    h1{font-weight: bold; font-size: 31px; letter-spacing: 2px; color: white; line-height: 33px;}
+    h3{font-weight: bold; font-size: 12px; color: black; text-transform: uppercase; margin: 10px 0 0 0;}
+    p{margin: 8px 0 20px 0; line-height: 18px;}
+    a, a:visited{color: #ffff69; text-decoration: none;}
+    a:hover{text-decoration: bold;}
+
+    .wrapper{display: block; padding: 4px 60px 0 60px; background:}
+
+    .map{background-color:#6969ff; position: absolute; top: 0; right: 0; bottom: 0; width: 70%; *height:100%;}
+    .sidepanel{background-color:#f42a41; position: absolute; top: 0; left: 0; bottom: 0; width: 30%; height: 100%; overflow: auto;}
+
+    .context{font-family: Helvetica, Arial; font-size: 13px; color: #999; padding: 10px 0 0 0;}
+    .subheader{border-bottom: 1px solid #ddd;}
+    .footer{border-top: 1px solid #ddd; margin-top: 30px;}
+    .titleBlock{text-align: left;}  
+      
+    /* Here are the styles that makes the template responsive */
+
+    @media only screen and (max-width: 768px) {
+      .map{position: inherit; height: 600px; width: 100%; display: block;}
+      .sidepanel{position: inherit; width: 100%;}
+    }
+
+    @media only screen and (max-width: 480px) {
+      .map {height: 300px;}
+    }
+      
+      .infowindow_template {
+      background: red;
+      color:black;
+      }
+      .borough-picker {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        font-size: 14px;
+        color:white;
+        background:#f42a41;
+      }
+      .button1 {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        top: 15px;
+        right: 15px;
+        font-size: 14px;
+        color:white;
+        background:#6969ff;
+        height: 80px;
+        width:80px;
+        border-radius: 50px;
+        border: 20px;
+        
+      }
+      .button1 a {
+       color:white;
+       padding:5px;
+      
+      }
+      .button1:hover {
+        background:#ffff69;
+      }
+      
+      .button1 a:hover {
+       color:dimgray;
+       padding:5px;
+       font-size: 14px;
+       }
+      
+    
+      
+      
+      .button2 {
+        position: absolute;
+        top: 15px;
+        right: 100px;
+        font-size: 14px;
+        color:white;
+        background:#6969ff;
+        height: 80px;
+        width:80px;
+        border-radius: 50px;
+        border: 20px;
+      }
+      
+      .button2 a {
+       color:white;
+       padding:5px;
+      }
+      
+      
+      .button2:hover {
+        background:#ffff69;
+      }
+      
+      .button2 a:hover {
+       color:dimgray;
+       padding:5px;
+       font-size: 14px;
+       }
+          
+        .button3 {
+        position: absolute;
+        top: 15px;
+        right: 185px;
+        font-size: 14px;
+        color:white;
+        background:#6969ff;
+        height: 80px;
+        width:80px;
+        border-radius: 50px;
+        border: 20px;
+      }
+      
+      .button3 a {
+       color:white;
+       padding:5px;
+          }
+      
+      .button3:hover {
+        background:#ffff69;
+      }
+      
+      .button3 a:hover {
+       color:dimgray;
+       padding:5px;
+       font-size: 14px;
+       }
+      
+    #slideout {
+    position: fixed;
+    top: 40px;
+    left: 0;
+    width: 35px;
+    padding: 12px 0;
+    text-align: center;
+    background: #6969ff;
+    -webkit-transition-duration: 0.3s;
+    -moz-transition-duration: 0.3s;
+    transition-duration: 0.3s;
+    -o-transition-duration: 0.3s;
+    -webkit-border-radius: 0 5px 5px 0;
+    -moz-border-radius: 0 5px 5px 0;
+    border-radius: 0 5px 5px 0;
+}
+    #slideout_inner {
+    position: fixed;
+    top: 40px;
+    left: -250px;
+    background: #6969ff;
+    width: 200px;
+    padding: 25px;
+    height: 350px;
+    -webkit-transition-duration: 0.3s;
+    -moz-transition-duration: 0.3s;
+    transition-duration: 0.3s;
+    -o-transition-duration: 0.3s;
+    text-align: left;
+    -webkit-border-radius: 0 0 5px 0;
+    -moz-border-radius: 0 0 5px 0;
+    border-radius: 0 0 5px 0;
+}
+#slideout_inner textarea {
+    width: 190px;
+    height: 100px;
+    margin-bottom: 6px;
+}
+#slideout:hover {
+    left: 250px;
+}
+#slideout:hover #slideout_inner {
+    left: 0;
+}
+      
+      #slideout2 {
+    position: fixed;
+    top: 150px;
+    left: 0;
+    width: 35px;
+    padding: 12px 0;
+    text-align: center;
+    background: #6969ff ;
+    -webkit-transition-duration: 0.3s;
+    -moz-transition-duration: 0.3s;
+    transition-duration: 0.3s;
+    -o-transition-duration: 0.3s;
+    -webkit-border-radius: 0 5px 5px 0;
+    -moz-border-radius: 0 5px 5px 0;
+    border-radius: 0 5px 5px 0;
+}
+    #slideout_inner2 {
+    position: fixed;
+    top: 40px;
+    left: -250px;
+    background: #6969ff ;
+    width: 200px;
+    padding: 25px;
+    height: 430px;
+    -webkit-transition-duration: 0.3s;
+    -moz-transition-duration: 0.3s;
+    transition-duration: 0.3s;
+    -o-transition-duration: 0.3s;
+    text-align: left;
+    -webkit-border-radius: 0 0 5px 0;
+    -moz-border-radius: 0 0 5px 0;
+    border-radius: 0 0 5px 0;
+}
+#slideout_inner2 textarea {
+    width: 190px;
+    height: 100px;
+    margin-bottom: 6px;
+}
+#slideout2:hover {
+    left: 250px;
+}
+#slideout2:hover #slideout_inner2 {
+    left: 0;
+}
+      
+div.cartodb-legend-stack {
+    width:300px;
+    position: absolute;
+    bottom: 35px;
+    left: 20px;
+    display: none;
+    webkit-box-shadow: rgba(0, 0, 0, 0.2) 0 0 4px 2px;
+    -moz-box-shadow: rgba(0, 0, 0, 0.2) 0 0 4px 2px;
+    box-shadow: rgba(0, 0, 0, 0.2) 0 0 4px 2px;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    -ms-border-radius: 4px;
+    -o-border-radius: 4px;
+    border-radius: 4px;
+    border: 1px solid #999999;
+    background: white;
+    z-index: 105;
+    cursor: text;
+}
+      
+      
+    </style>
+  <body>
+      
+   --- <div class="map" id="map"></div>
+      
+          <button class="button1" class="hover"><a href="bangladeshtrade.html">Total<br>Trade</a></button>
+       <button class="button2" class="hover"><a href="import.html">Imports</a></button>
+       <button class="button3" class="hover"><a href="export.html">Exports</a></button>
+    
+
+    <div class="sidepanel">
+      <div class="wrapper">
+          
+          <div id="slideout">
+    <img height="45" width="15" src="http://ahmedh.neocities.org/about.png" alt="About" />
+    <div id="slideout_inner">
+        <p>This project was created to address some of the user experience challenges of using <a href="http://trademap.org/Index.aspx" target="_blank">trademap.org</a>. For example, users have to click multiple times to create a simple geographic visualization of Bangladesh's trading partners. In this redesigned version of the map, user do not have click as much and can navigate between the maps using the three buttons on the top right. The main goal of this project was to present the users with the option to navigate between Bangladesh's trade data in a clean and a simple interface.</p>
+    </div>
+</div>
+       
+        <br>
+            
+         <img src="http://ahmedh.neocities.org/import.png" alt="Top 10 Export Market" style="height:80px; width:100% align:left"> </img>
+          
+        <p>            
+        The total imports for the year <strong>2014</strong> was <strong>$39.5 Billion</strong>. Its top imports are Refined Petroleum <strong>($2.24B)</strong>, Heavy Pure Woven Cotton <strong>($1.31B)</strong>, Raw Cotton <strong>($1.15B)</strong>, Light Pure Woven Cotton <strong>($1.12B)</strong> and Palm Oil <strong>($1.01B)</strong>. Most of the imports are coming in from the neighboring Asian countries with one exception being the United States. 
+</p>
+            
+        <br><Br>
+        <h1>Top Import Destinations</h1>
+            
+             <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+    google.charts.load("current", {packages:["corechart"]});
+    google.charts.setOnLoadCallback(drawChart);
+    function drawChart() {
+      var data = google.visualization.arrayToDataTable([
+        ["Country", "Export Amount", { role: "style" } ],
+        ["China", 11783095000, "#2db573"],
+        ["India", 6255235000, "#2db573"],
+        ["Singapore", 3273436000, "#2db573"],
+        ["Hong Kong", 1373008000, "color: #2db573"],
+        ["Indonesia",1377619000, "#2db573"],
+        ["S. Korea", 1236207000, "#2db573"],
+        ["Malaysia", 1229340000, "#2db573"],
+        ["Japan", 1164494000, "color:#2db573"],
+        ["USA", 1113364000, "color:#2db573"],
+        ["Taiwan", 1068728000, "color:#2db573"]
+      ]);
+
+      var view = new google.visualization.DataView(data);
+      view.setColumns([0, 1,
+                       { calc: "stringify",
+                         sourceColumn: 1,
+                         type: "string",
+                         role: "annotation" },
+                       2]);
+
+      var options = {
+        orientation:'vertical',
+        reverseCategories: true,
+        annotations: {textStyle:{fontSize:1 }},
+        axisTitlesPosition:'none',
+        width: 330,
+        height: 500,
+        bar: {groupWidth: "20"},
+        fontSize: 14, 
+        bars: 'horizontal',
+        legend: { position: 'none' },
+        backgroundColor:'transparent',
+        chartArea:{top:40},
+        color:'black',
+        hAxis:{format: 'long',textStyle:{color:'white'}},
+        hAxismaxValue:0,
+        vAxis: {textStyle:{ color: 'white',fontSize:11}},
+        text:'none'
+        
+      };
+      var chart = new google.visualization.BarChart(document.getElementById("barchart_values"));
+      chart.draw(view, options);
+  }
+  </script>
+    <div id="barchart_values" style="width: 300px; height: 450px;"></div>
+
+        <!--Copy and paste the div below for creating content blocks-->
+        
+        <h1>Data Source </h1>
+        <p>The data for this project was gathered from <a href="http://trademap.org/Index.aspx" target="_blank">trademap.org</a>, a site run the International Trade Centre. All the data is for the year 2014, as the data for 2015 is not available for all the trading partners of Bangladesh. Additional data and information was gathered from MIT’s <a href="http://atlas.media.mit.edu/en/" target="_blank">Observatory of Economic Complexity</a>. </p>
+        <br>
+        
+
+         <div class="context subheader">
+          <p style="color:white">Map created by <a href="http://hasinahmed.org/" target="_blank">Hasin I. Ahmed</a></p><Br>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://maps.googleapis.com/maps/api/js?sensor=false&v=3.8"></script>
+    <script src="http://libs.cartocdn.com/cartodb.js/v3/cartodb.js"></script>
+      
+      <script>  
+        
+      var map;
+      var sublayer;
+        
+        function main() {
+
+          var options = {
+            center: [43.925594, 25.400391],
+            zoom: 2, 
+            cartodb_logo: false,
+            zoomControl: false,  // dont add the zoom overlay (it is added by default)
+            loaderControl: false //dont show tiles loader
+          };
+            
+
+          cartodb.createVis('map', 'https://ahmedh.cartodb.com/api/v2/viz/6a75287a-0b4e-11e6-a708-0ea31932ec1d/viz.json', options)
+            .done(function(vis, layers) {
+              // there are two layers, base layer and points layer
+              sublayer = layers[1].getSubLayer(0);
+              sublayer.set({ 'interactivity': ['cartodb_id', 'coutry_name','url', 'exported_value_2014_usd_thousand','imported_value_2014_usd_thousand', 'trade_balance_2014_usd_thousand','share_in_bangladesh_s_imports','total_import_growth_in_value_of_partner_countries_between_2010_','main_import_items','imported_growth_in_value_between_2013_2014_p_a'] });
+
+
+              // Set the custom infowindow template defined on the html
+              sublayer.infowindow.set('template', $('#infowindow_template').html());
+            
+
+              // add the tooltip show when hover on the point
+              vis.addOverlay({
+                type: 'tooltip',
+                position: 'top|center',
+                template: '<div style="width:150px; color:#5d5d5d; padding:0px; font-size:16px"><img src="{{url}}" alt="image" height="50" width="50"><br>{{coutry_name}}</div>' 
+              });
+
+              vis.addOverlay({
+                type: 'infobox',
+                template: '<div style="background:white;padding:0px;border:0px" class="cartodb-tooltip-content-wrapper"><h3 style="color:#f42a41 ;font-size:18px;">{{coutry_name}} 2014</h3><h3 style="font-size:14px;color:#5d5d5d">Import Amount:</h3><h3 style="font-size:24px;color:#2db573">${{imported_value_2014_usd_thousand}},000</h3><h3 style="font-size:14px;color:#5d5d5d">Import Share:</h3> <h3 style="font-size:24px;color:#2db573">{{share_in_bangladesh_s_imports}}%</h3><h3 style="font-size:14px;color:#5d5d5d">Import Growth:</h3><h3 style="font-size:24px;color:#2db573">{{imported_growth_in_value_between_2013_2014_p_a}}%</h3></div>',
+                width: 190,
+                position: 'bottom|right'
+              });
+            });  
+        }
+
+          
+        
+        
+window.onload = main;
+        
+        
+    </script>
+
+  </body>
+      </html>

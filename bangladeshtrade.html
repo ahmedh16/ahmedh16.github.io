@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <!--Edit the title of the page-->
+    <title>Import & Export Map</title>
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="http://libs.cartocdn.com/cartodb.js/v3/themes/css/cartodb.css" />
+      <link rel="stylesheet" href="style.css"/>
+    <!--[if lte IE 8]>
+      <link rel="stylesheet" href="http://libs.cartocdn.com/cartodb.js/v3/themes/css/cartodb.ie.css" />
+    <![endif]-->
+    <!--Switch between the different themes changing the stylesheet below - light-theme.css |dark-theme.css -->
+    <link rel="stylesheet" href="css/light-theme.css">
+    <link rel="stylesheet" href="css/makeitresponsive.css">
+    <script src="//code.jquery.com/jquery-2.1.1.min.js"></script>
+      <script src="//code.jquery.com/jquery-2.1.1.min.js"></script>
+  </head>
+    
+<style>
+    body{
+        font-family: Helvetica, Arial; font-weight: regular; font-size: 15px; color: white; background-color: #FFF; margin: 0;
+}
+    h1{
+        font-weight: bold; font-size: 31px; letter-spacing: 2px; color: white; line-height: 33px;
+}
+    h3{
+        font-weight: bold; font-size: 12px; color: black; text-transform: uppercase; margin: 10px 0 0 0;
+    }
+    p{
+        margin: 8px 0 20px 0; line-height: 18px;
+}
+    a, a:visited{
+        color: #ffff69; text-decoration: none;
+}
+    a:hover{
+            text-decoration: bold;
+    }
+    .wrapper{
+            display: block; padding: 4px 60px 0 60px;
+    }
+    .map{
+            background-color:#6969ff; position: absolute; top: 0; right: 0; bottom: 0; width: 70%; *height:100%;
+    }
+    .sidepanel{
+            background-color:#f42a41; position: absolute; top: 0; left: 0; bottom: 0; width: 30%; height: 100%; overflow: auto;
+    }
+    .context{
+            font-family: Helvetica, Arial; 
+            font-size: 13px; color: #999; 
+            padding: 10px 0 0 0;}
+    .subheader{
+            border-bottom: 1px solid #ddd;
+    }
+    .footer{
+        border-top: 1px solid #ddd; 
+        margin-top: 30px;
+    }
+    .titleBlock{
+            text-align: left;
+    }  
+    @media only screen and (max-width: 768px) {
+          .map{position: inherit; height: 600px; width: 100%; display: block;}
+          .sidepanel{position: inherit; width: 100%;}
+        }
+    @media only screen and (max-width: 480px) {
+          .map {height: 300px;}
+        }
+    .infowindow_template {
+          background: red;
+          color:black;
+          }
+    .borough-picker {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 14px;
+            color:white;
+            background:#f42a41;
+          }
+    .button1 {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            top: 15px;
+            right: 15px;
+            font-size: 14px;
+            color:white;
+            background:#6969ff;
+            height: 80px;
+            width:80px;
+            border-radius: 50px;
+            border: 20px;
+
+          }
+    .button1 a {
+           color:white;
+           padding:5px;
+
+          }
+    .button1:hover {
+            background:#ffff69;
+          }
+    .button1 a:hover {
+           color:dimgray;
+           padding:5px;
+           font-size: 14px;
+           }
+    .button2 {
+            position: absolute;
+            top: 15px;
+            right: 100px;
+            font-size: 14px;
+            color:white;
+            background:#6969ff;
+            height: 80px;
+            width:80px;
+            border-radius: 50px;
+            border: 20px;
+          }
+    .button2 a {
+           color:white;
+           padding:5px;
+          }
+    .button2:hover {
+            background:#ffff69;
+          }
+    .button2 a:hover {
+           color:dimgray;
+           padding:5px;
+           font-size: 14px;
+           }
+    .button3 {
+            position: absolute;
+            top: 15px;
+            right: 185px;
+            font-size: 14px;
+            color:white;
+            background:#6969ff;
+            height: 80px;
+            width:80px;
+            border-radius: 50px;
+            border: 20px;
+          }
+    .button3 a {
+           color:white;
+           padding:5px;
+              }
+    .button3:hover {
+            background:#ffff69;
+          }
+    .button3 a:hover {
+           color:dimgray;
+           padding:5px;
+           font-size: 14px;
+           }
+    #slideout {
+        position: fixed;
+        top: 40px;
+        left: 0;
+        width: 35px;
+        padding: 12px 0;
+        text-align: center;
+        background: #6969ff;
+        -webkit-transition-duration: 0.3s;
+        -moz-transition-duration: 0.3s;
+        transition-duration: 0.3s;
+        -o-transition-duration: 0.3s;
+        -webkit-border-radius: 0 5px 5px 0;
+        -moz-border-radius: 0 5px 5px 0;
+        border-radius: 0 5px 5px 0;
+    }
+    #slideout_inner {
+        position: fixed;
+        top: 40px;
+        left: -250px;
+        background: #6969ff;
+        width: 200px;
+        padding: 25px;
+        height: 350px;
+        -webkit-transition-duration: 0.3s;
+        -moz-transition-duration: 0.3s;
+        transition-duration: 0.3s;
+        -o-transition-duration: 0.3s;
+        text-align: left;
+        -webkit-border-radius: 0 0 5px 0;
+        -moz-border-radius: 0 0 5px 0;
+        border-radius: 0 0 5px 0;
+    }
+    #slideout_inner textarea {
+        width: 190px;
+        height: 100px;
+        margin-bottom: 6px;
+    }
+    #slideout:hover {
+        left: 250px;
+    }
+    #slideout:hover #slideout_inner {
+        left: 0;
+    }
+    #slideout2 {
+        position: fixed;
+        top: 150px;
+        left: 0;
+        width: 35px;
+        padding: 12px 0;
+        text-align: center;
+        background: #6969ff ;
+        -webkit-transition-duration: 0.3s;
+        -moz-transition-duration: 0.3s;
+        transition-duration: 0.3s;
+        -o-transition-duration: 0.3s;
+        -webkit-border-radius: 0 5px 5px 0;
+        -moz-border-radius: 0 5px 5px 0;
+        border-radius: 0 5px 5px 0;
+    }
+    #slideout_inner2 {
+        position: fixed;
+        top: 40px;
+        left: -250px;
+        background: #6969ff ;
+        width: 200px;
+        padding: 25px;
+        height: 430px;
+        -webkit-transition-duration: 0.3s;
+        -moz-transition-duration: 0.3s;
+        transition-duration: 0.3s;
+        -o-transition-duration: 0.3s;
+        text-align: left;
+        -webkit-border-radius: 0 0 5px 0;
+        -moz-border-radius: 0 0 5px 0;
+        border-radius: 0 0 5px 0;
+    }
+    #slideout_inner2 textarea {
+        width: 190px;
+        height: 100px;
+        margin-bottom: 6px;
+    }
+    #slideout2:hover {
+        left: 250px;
+    }
+    #slideout2:hover #slideout_inner2 {
+        left: 0;
+    }
+    
+    </style>
+    
+  <body>
+      
+   <div class="map" id="map"></div>
+      
+      
+       <button class="button1" class="hover"><a href="bangladeshtrade.html">Total<br>Trade</a></button>
+       <button class="button2" class="hover"><a href="import.html">Imports</a></button>
+       <button class="button3" class="hover"><a href="export.html">Exports</a></button>
+      
+      
+    
+
+    <div class="sidepanel">
+      <div class="wrapper">
+          
+          <div id="slideout">
+    <img height="45" width="15" src="http://ahmedh.neocities.org/about.png" alt="About" />
+    <div style="z-index:10000" id="slideout_inner">
+        <p>This project was created to address some of the user experience challenges of using <a href="http://trademap.org/Index.aspx" target="_blank">trademap.org</a>. For example, users have to click multiple times to create a simple geographic visualization of Bangladesh's trading partners. In this redesigned version of the map, user do not have click as much and can navigate between the maps using the three buttons on the top right. The main goal of this project was to present the users with the option to navigate between Bangladesh's trade data in a clean and a simple interface.</p>
+        
+
+
+        
+    </div>
+</div>
+          
+          
+       
+        <br>
+            
+         <img src="http://ahmedh.neocities.org/Title.png" style="height:80px; width:100% align:left"> </img>
+          
+        <p>            
+        Globally, Bangladesh’s economy is currently ranked <strong>32nd largest</strong> in terms of purchasing power parity (PPP). The current population stands close to 160 million and the nation has a gross domestic product (GDP) of <strong>$172 billion USD</strong>. In the year 2014, Bangladesh traded with <strong>146</strong> countries across the globe. Exports in 2014 totaled at around <strong>$34 billion USD</strong> and total imports were around <strong>$39 billion USD</strong>, which resulted in a trade deficit  of around <strong>$6 Billion USD</strong>. Bangladesh is projected to reach a growth rate of <strong>7.1%</strong> for the year 2016. Over the last 10 years, Bangladesh has constantly performed at an average growth rate of <strong>6%</strong>. Majority of Bangladesh’s growth has taken place due to the presence of the rapidly growing ready made garments & textiles sectors, which exports all across the major OECD nations. 
+
+</p>
+            
+        <br><Br>
+        <h1>Trade Balance</h1>
+            
+         <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+                            <script type="text/javascript">
+                              google.charts.load('current', {'packages':['corechart']});
+                              google.charts.setOnLoadCallback(drawChart);
+                              function drawChart() {
+
+                                var data = google.visualization.arrayToDataTable([
+                                  ['Trade', 'Amount'],
+                                  ['Import',    39512780000],
+                                  ['Export',     33733625000],
+                                ]);
+
+                                var options = {
+                                  backgroundColor:'transparent',
+                                  pieStartAngle: 165,
+                                  fontSize:15,
+                                  chartArea:{width:'80%',height:'80%'},
+                                  pieSliceText: 'percentage',
+                                  pieHole: 0.4,
+                                  pieSliceTextStyle: {color: 'dimgray',bold:false},
+                                  slices: {
+                                      0: {color: '#2db573',stroke:'black'},
+                                      1: {color: '#ffff69'}
+                                  },
+                                  forceIFrame: true,
+                                  legend: {position:'bottom',textStyle:{color:'white'}},
+                                  tooltip: { isHtml: true, showColorCode: true, text:'value',textstyle: {bold:false},trigger:'focus'},
+                                  titleTextStyle:{bold:false,color:'white',fontSize:'20'}
+                                };
+                                  
+                                  
+                                  
+                                  
+                                  
+
+                                var chart = new google.visualization.PieChart(document.getElementById('donut_single'));
+                                chart.draw(data, options);
+                              }
+                            </script>
+                            <div   id="donut_single" style="width: 300px; height: 300px;">  </div>
+                        
+
+        <!--Copy and paste the div below for creating content blocks-->
+        <br><br>
+        <h1>Data Source </h1>
+        <p>The data for this project was gathered from <a href="http://trademap.org/Index.aspx" target="_blank">trademap.org</a>, a site run the International Trade Centre. All the data is for the year 2014, as the data for 2015 is not available for all the trading partners of Bangladesh. Additional data and information was gathered from MIT’s <a href="http://atlas.media.mit.edu/en/" target="_blank">Observatory of Economic Complexity</a>. </p>
+        <br>
+        
+
+         <div class="context subheader">
+          <p style="color:white">Map created by <a href="http://hasinahmed.org/" target="_blank">Hasin I. Ahmed</a></p><Br>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://maps.googleapis.com/maps/api/js?sensor=false&v=3.8"></script>
+    <script src="http://libs.cartocdn.com/cartodb.js/v3/cartodb.js"></script>
+    <!--Change the URL below in order to change the map that is being shown.
+    Go to your map in CartoDB, click on share, and copy the URL undert the API section
+    Check the cartodb.js documentation for more info
+    http://developers.cartodb.com/documentation/cartodb-js.html-->
+   
+      
+      
+      
+      <script>  
+        
+       var map;
+      var sublayer;
+        
+        function main() {
+
+          var options = {
+            center: [44, 21],
+            zoom: 2, 
+            cartodb_logo: false,
+            zoomControl: false,  // dont add the zoom overlay (it is added by default)
+            loaderControl: false //dont show tiles loader
+          };
+            
+
+          cartodb.createVis('map', 'https://ahmedh.cartodb.com/api/v2/viz/02639ae6-05a4-11e6-a9f7-0e787de82d45/viz.json', options)
+            .done(function(vis, layers) {
+              // there are two layers, base layer and points layer
+              sublayer = layers[1].getSubLayer(0);
+              sublayer.set({ 'interactivity': ['cartodb_id', 'coutry_name','url','map_icon', 'exported_value_2014_usd_thousand','imported_value_2014_usd_thousand', 'trade_balance_2014_usd_thousand'] });
+
+
+              // Set the custom infowindow template defined on the html
+              sublayer.infowindow.set('template', $('#infowindow_template').html());
+            
+
+              // add the tooltip show when hover on the point
+              vis.addOverlay({
+                type: 'tooltip',
+                position: 'top|center',
+                template: '<div style="width:300px; color:#5d5d5d; padding:0px; font-size:16px"><img src="{{map_icon}}" alt="image" height="46" width="58"></div>' 
+              });
+
+              vis.addOverlay({
+                type: 'infobox',
+                template: '<div style="background:white;padding:0px;border:0px" class="cartodb-tooltip-content-wrapper"><h3 style="color:#f42a41 ;font-size:18px;"><img src="{{url}}"><br>{{coutry_name}} 2014</h3><h3 style="font-size:14px;color:#5d5d5d">Exported Amount:</h3><h3 style="font-size:24px;color:#2db573">${{exported_value_2014_usd_thousand}},000</h3><h3 style="font-size:14px;color:#5d5d5d">Imported Amount:</h3> <h3 style="font-size:24px;color:#2db573">${{imported_value_2014_usd_thousand}},000</h3><h3 style="font-size:14px;color:#5d5d5d">Trade Balance:</h3><h3 style="font-size:24px;color:#2db573">${{trade_balance_2014_usd_thousand}},000</h3></div>',
+                width: 190,
+                position: 'bottom|right'
+              });
+            });  
+        }
+
+          
+        
+        
+window.onload = main;
+        
+        
+    </script>
+        
+       
+  </body>
+      
+</html>
